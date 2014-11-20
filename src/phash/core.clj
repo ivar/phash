@@ -28,15 +28,76 @@
   [img default-size]
   (dbl/afill! [x default-size y default-size] (get-pixel-val img x y)))
 
+
+(defn init-coefficients
+  [size]
+  (let [coeffs (double-array size 1)
+        _ (aset coeffs 0 (/ 1 (Math/sqrt 2.0)))]
+    coeffs))
+
+(defn dct
+  [i j u v value size]
+  (* value
+     (Math/cos (* u Math/PI (/ (* 2 (+ i 1)) (* 2 size))))
+     (Math/cos (* v Math/PI (/ (* 2 (+ j 1)) (* 2 size))))))
+
+
+(defn apply-dct
+  [values coefficients size]
+  (let [f-array (make-array Double/TYPE size size)]
+    (dotimes [u size]
+      (dotimes [v size]
+                (let [sum (areduce
+                            (make-array Double/TYPE (* size size))
+                            idx
+                            sum
+                            0
+                            (let [i (rem idx size)
+                                  j (quot idx size)]
+                              (dct i j u v (aget values i j) size)))
+                      sum (* sum (/ (aget coefficients u v) 4.0))]
+                  (aset f-array u v sum))
+                ))
+    f-array))
+
+(defn get-dct-total
+  [dct-values small-size]
+  (let [total (areduce
+                (make-array Double/TYPE (* small-size small-size))
+                idx
+                sum
+                0
+                (let [i (rem idx small-size)
+                      j (quot idx small-size)]
+                  (aget dct-values i j)))]
+    (- total (aget dct-values 0 0))))
+
+(defn get-subarray
+  [dct-values small-size]
+  (let [sub-array (make-array Double/TYPE (* small-size small-size))]
+    (dotimes [i small-size]
+      (dotimes [j small-size]
+        (aset sub-array (+ (* i small-size) j) (aget dct-values i j))))))
+
+
+(defn reduce-dct
+  [dct-values small-size]
+  (let [reduced-array (get-subarray dct-values small-size)
+        total (get-dct-total dct-values small-size)
+        avg (/  total (- (* small-size small-size) 1))]
+    nil))
+
 (defn get-hash
   "Returns a binary string hash of the image"
-  ([^BufferedImage img] (get-hash img default-size default-size))
-  ([^BufferedImage img width height]
+  ([^BufferedImage img] (get-hash img default-size default-small-size))
+  ([^BufferedImage img size small-size]
   (->
     img
-    (resize default-size)
+    (resize size)
     greyscale
-    (get-grey-arrays default-size)))
+    (get-grey-arrays size)
+    (apply-dct (init-coefficients size) size)
+    (reduce-dct small-size)))
   )
 
 (defn distance

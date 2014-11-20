@@ -24,5 +24,16 @@
 
 (deftest get-grey-arrays-test
   ;small image should be processed and
-  (let [img (BufferedImage. )])
+  ;(let [img (BufferedImage. )])
   )
+
+(deftest get-subarray-test
+  (testing "Correct single array is returned"
+    (let [original-array (make-array Double/TYPE 3 3)
+          _ (aset original-array 0 (double-array [1.0 2.0 3.0]))
+          _ (aset original-array 1 (double-array [4.0 5.0 6.0]))
+          _ (aset original-array 2 (double-array [7.0 8.0 9.0]))
+          sub-array (double-array [1.0 2.0 4.0 5.0])
+          result (get-subarray original-array 2)]
+      (print "result" result)
+      (is (= 0 (compare sub-array result))))))
