@@ -1,6 +1,10 @@
 # phash
 
-A Clojure library designed to ... well, that part is up to you.
+A Clojure library designed to calculate phash of image
+
+
+https://sites.google.com/site/piotrwendykier/software/jtransforms
+http://stackoverflow.com/questions/10797824/dct2-of-png-using-jtransforms
 
 ## Usage
 
