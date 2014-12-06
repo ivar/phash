@@ -1,5 +1,7 @@
 # phash
 
+[ ![Codeship Status for lacogubik/phash](https://codeship.com/projects/69ab8980-5f0c-0132-2efc-3643fcd47fc7/status)](https://codeship.com/projects/51489)
+
 A Clojure library designed to calculate phash of image
 
 
