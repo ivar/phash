@@ -98,7 +98,9 @@
     (get-grey-arrays size)
     (apply-dct (init-coefficients size) size)
     (reduce-dct small-size)))
-  )
+  ); use hex to return hash
+;bin-> hex new BigInteger(binaryString, 2).toString(16)
+;hex-> bin new BigInteger(s, 16).toString(2)
 
 (defn distance
   "Calculates hamming distance between two phashes"
